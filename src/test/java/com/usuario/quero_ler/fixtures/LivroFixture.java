@@ -1,12 +1,13 @@
 package com.usuario.quero_ler.fixtures;
 
-import com.usuario.quero_ler.dtos.livro.*;
-import com.usuario.quero_ler.enums.LivroIdioma;
-import com.usuario.quero_ler.enums.LeituraStatus;
-import com.usuario.quero_ler.enums.TiposDeBusca;
-import com.usuario.quero_ler.models.Autor;
-import com.usuario.quero_ler.models.Livro;
-import com.usuario.quero_ler.models.Leitura;
+import static com.usuario.quero_ler.fixtures.EntityBuilders.*;
+
+import com.usuario.quero_ler.infrastructure.dto.livro.*;
+import com.usuario.quero_ler.core.enums.LivroIdioma;
+import com.usuario.quero_ler.core.enums.LeituraStatus;
+import com.usuario.quero_ler.core.enums.TiposDeBusca;
+import com.usuario.quero_ler.core.entities.Autor;
+import com.usuario.quero_ler.core.entities.Livro;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,139 +26,65 @@ public class LivroFixture {
     private static final LivroIdioma IDIOMA = LivroIdioma.PORTUGUES;
     private static final String SINOPSE = "Um guia sobre boas práticas de programação e escrita de código limpo.";
     private static final byte[] CAPADOLIVRO = carregarImagem();
-    private static final List<Autor> AUTORES = new ArrayList<>();
-    private static final List<Leitura> USUARIOS = new ArrayList<>();
     private static final LocalDateTime DATA_DE_CADASTRO = LocalDateTime.now();
-
 
     public static BuscaDeLivrosRequest buscaDeLivrosRequest(TiposDeBusca tiposDeBusca){
         return switch (tiposDeBusca){
-            case ISBN -> new BuscaDeLivrosRequest(TiposDeBusca.ISBN,ISBN);
-            case EDITORA -> new BuscaDeLivrosRequest(TiposDeBusca.EDITORA,EDITORA);
-            case TITULO -> new BuscaDeLivrosRequest(TiposDeBusca.TITULO,TITULO);
-            case AUTOR -> new BuscaDeLivrosRequest(TiposDeBusca.AUTOR,AutorFixture.entity().getNome());
+            case ISBN -> new BuscaDeLivrosRequest(TiposDeBusca.ISBN, ISBN);
+            case EDITORA -> new BuscaDeLivrosRequest(TiposDeBusca.EDITORA, EDITORA);
+            case TITULO -> new BuscaDeLivrosRequest(TiposDeBusca.TITULO, TITULO);
+            case AUTOR -> new BuscaDeLivrosRequest(TiposDeBusca.AUTOR, AutorFixture.entity().nome());
         };
     }
 
     public static LivroRequest request(){
         return new LivroRequest(
-                TITULO,
-                ISBN,
-                EDITORA,
-                ANODEPUBLICACAO,
-                NUMERODEPAGINAS,
-                IDIOMA,
-                SINOPSE,
+                TITULO, ISBN, EDITORA, ANODEPUBLICACAO, NUMERODEPAGINAS, IDIOMA, SINOPSE,
                 List.of(AutorFixture.request())
         );
     }
 
     public static Livro entity(){
-      List<Autor>autores = new ArrayList<>();
-      autores.add(AutorFixture.entity());
-        return new Livro(
-                ID,
-                TITULO,
-                ISBN,
-                EDITORA,
-                ANODEPUBLICACAO,
-                NUMERODEPAGINAS,
-                IDIOMA,
-                SINOPSE,
-                null,
-                autores,
-                null,
-                LocalDateTime.now(),
-                0
-
-        );
-    }
-public static Livro entityComCapa(){
-      List<Autor>autores = new ArrayList<>();
-      autores.add(AutorFixture.entity());
-      return new Livro(
-                ID,
-                TITULO,
-                ISBN,
-                EDITORA,
-                ANODEPUBLICACAO,
-                NUMERODEPAGINAS,
-                IDIOMA,
-                SINOPSE,
-                CAPADOLIVRO,
-                autores,
-                null,
-              LocalDateTime.now(),
-              0
-        );
+        List<Autor> autores = new ArrayList<>();
+        autores.add(AutorFixture.entity());
+        return livro()
+                .id(ID).titulo(TITULO).isbn(ISBN).editora(EDITORA)
+                .anoDePublicacao(ANODEPUBLICACAO).numeroDePaginas(NUMERODEPAGINAS)
+                .idioma(IDIOMA).sinopse(SINOPSE).autores(autores)
+                .dataDeCadastro(LocalDateTime.now()).build();
     }
 
     public static LivroResponse response(){
         return new LivroResponse(
-                ID,
-                TITULO,
-                ISBN,
-                EDITORA,
-                ANODEPUBLICACAO,
-                NUMERODEPAGINAS,
-                IDIOMA,
-                SINOPSE,
-                "/livros/"+ ID + "/capa",
-                DATA_DE_CADASTRO,
-                List.of(AutorFixture.response())
+                ID, TITULO, ISBN, EDITORA, ANODEPUBLICACAO, NUMERODEPAGINAS, IDIOMA, SINOPSE,
+                "/livros/"+ ID + "/capa", DATA_DE_CADASTRO, List.of(AutorFixture.response())
         );
     }
 
     public static LivroCardResponse responseCard(){
         return new LivroCardResponse(
-                "/livros/"+ ID + "/capa",
-                TITULO,
-                EDITORA,
-                ANODEPUBLICACAO,
-                NUMERODEPAGINAS,
-                DATA_DE_CADASTRO,
-                List.of(AutorFixture.response())
+                "/livros/"+ ID + "/capa", TITULO, EDITORA, ANODEPUBLICACAO, NUMERODEPAGINAS,
+                DATA_DE_CADASTRO, List.of(AutorFixture.response())
         );
     }
 
     public static LivroTelaLeituraResponse responseTelaDeLeitura(LeituraStatus status){
-        return new LivroTelaLeituraResponse(
-                TITULO,
-                status,
-                "/livros/"+ ID + "/capa",
-                DATA_DE_CADASTRO
-        );
+        return new LivroTelaLeituraResponse(TITULO, status, "/livros/"+ ID + "/capa", DATA_DE_CADASTRO);
     }
 
     public static LivroDetalhadoResponse responseDetalhado(LeituraStatus status){
         return new LivroDetalhadoResponse(
-                "/livros/"+ ID + "/capa",
-                TITULO,
-                EDITORA,
-                ANODEPUBLICACAO,
-                NUMERODEPAGINAS,
-                IDIOMA.name(),
-                ISBN,
-                SINOPSE,
-                DATA_DE_CADASTRO,
-                List.of(AutorFixture.response())
-
+                "/livros/"+ ID + "/capa", TITULO, EDITORA, ANODEPUBLICACAO, NUMERODEPAGINAS,
+                IDIOMA.name(), ISBN, SINOPSE, DATA_DE_CADASTRO, List.of(AutorFixture.response())
         );
     }
 
     private static byte[] carregarImagem() {
-        try (InputStream is = LivroFixture.class
-                .getClassLoader()
-                .getResourceAsStream("capa.jpg")) {
-
-            if (is == null) {
-                throw new RuntimeException("Arquivo capa.jpg não encontrado");
-            }
-
+        try (InputStream is = LivroFixture.class.getClassLoader().getResourceAsStream("capa.jpg")) {
+            if (is == null) return new byte[0];
             return is.readAllBytes();
-
         } catch (IOException e) {
-            throw new RuntimeException("Erro ao carregar imagem", e);
+            return new byte[0];
         }
     }
 }

@@ -1,9 +1,11 @@
 package com.usuario.quero_ler.fixtures;
 
-import com.usuario.quero_ler.dtos.documento.DocumentoRequestDto;
-import com.usuario.quero_ler.dtos.documento.DocumentoResponseDto;
-import com.usuario.quero_ler.enums.DocumentoTipo;
-import com.usuario.quero_ler.models.Documento;
+import static com.usuario.quero_ler.fixtures.EntityBuilders.*;
+
+import com.usuario.quero_ler.infrastructure.dto.documento.DocumentoRequestDto;
+import com.usuario.quero_ler.infrastructure.dto.documento.DocumentoResponseDto;
+import com.usuario.quero_ler.core.enums.DocumentoTipo;
+import com.usuario.quero_ler.core.entities.Documento;
 
 import java.time.LocalDateTime;
 
@@ -15,18 +17,20 @@ public class DocumentoFixture {
     private static final LocalDateTime ULTIMA_ALTERACAO = LocalDateTime.now();
 
     public static DocumentoRequestDto requestDto(){
-        return new DocumentoRequestDto(TITULO,TIPO,CONTEUDO);
+        return new DocumentoRequestDto(TITULO, TIPO, CONTEUDO);
     }
 
     public static Documento entity(){
-        return new Documento(ID,TITULO,TIPO,CONTEUDO,ULTIMA_ALTERACAO);
+        return documento()
+                .id(ID)
+                .titulo(TITULO)
+                .tipo(TIPO)
+                .conteudo(CONTEUDO)
+                .ultimaAlteracao(ULTIMA_ALTERACAO)
+                .build();
     }
 
     public static DocumentoResponseDto responseDto(){
-        return new DocumentoResponseDto(ID,TITULO,TIPO,CONTEUDO,ULTIMA_ALTERACAO);
-    }
-    public static DocumentoResponseDto responseDto(Documento doc){
-        return new DocumentoResponseDto(doc.getId(),
-                doc.getTitulo(), doc.getTipo(), doc.getConteudo(), doc.getUltimaAlteracao());
+        return new DocumentoResponseDto(ID, TITULO, TIPO, CONTEUDO, ULTIMA_ALTERACAO);
     }
 }

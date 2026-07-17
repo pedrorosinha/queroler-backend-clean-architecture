@@ -12,7 +12,7 @@ spring:
       max-request-size: 10MB
 
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/db_quero_ler_v2}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/db_quero_ler_v2_clean_architecture}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
     password: ${SPRING_DATASOURCE_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver

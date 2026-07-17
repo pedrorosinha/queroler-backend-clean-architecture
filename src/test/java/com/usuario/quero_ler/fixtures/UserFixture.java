@@ -1,9 +1,11 @@
 package com.usuario.quero_ler.fixtures;
 
-import com.usuario.quero_ler.dtos.usuario.*;
-import com.usuario.quero_ler.enums.UsuarioProfile;
-import com.usuario.quero_ler.models.User;
-import com.usuario.quero_ler.models.Usuario;
+import static com.usuario.quero_ler.fixtures.EntityBuilders.*;
+
+import com.usuario.quero_ler.infrastructure.dto.usuario.*;
+import com.usuario.quero_ler.core.enums.UsuarioProfile;
+import com.usuario.quero_ler.core.entities.User;
+import com.usuario.quero_ler.core.entities.Usuario;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
@@ -14,9 +16,7 @@ public class UserFixture {
     private static final Long ID = 1L;
     private static final String NOME = "Nome SobreNome";
     private static final String EMAIL = "nome@gmail.com";
-    private static final String CONFIRMAR_EMAIL = "nome@gmail.com";
     private static final String SENHA = "Teste123&";
-    private static final String CONFIRMAR_SENHA = "Teste123&";
     private static final String CPF = "49618203000";
     private static final LocalDate DATA_DE_NASCIMENTO = LocalDate.of(2000, 12, 5);
 
@@ -24,7 +24,6 @@ public class UserFixture {
     private static final String CIDADE = "Valinhos";
     private static final String ESTADO = "São paulo";
     private static final String PAIS = "Brasil";
-    private static final Boolean senhaTrocada = false;
     private static final byte[] FOTO = carregarImagem();
 
     public static UsuarioRequestDto requestDto() {
@@ -37,59 +36,34 @@ public class UserFixture {
                 NOME, EMAIL, senha, CPF, DATA_DE_NASCIMENTO, CHECK_TERMO);
     }
 
-    public static String requestDtoString() {
-        return """
-                {
-                 "nome":"%s",
-                 "email":"%s",
-                 "confirmarEmail":"%s",
-                 "senha":"%s",
-                 "confirmarSenha":"%s",
-                 "cpf":"%s",
-                 "dataDeNascimento":"%s",
-                 "checkTermo": %s
-                }
-                """.formatted(
-                NOME, EMAIL, CONFIRMAR_EMAIL, SENHA, CONFIRMAR_SENHA, CPF,
-                DATA_DE_NASCIMENTO.toString(), CHECK_TERMO);
-    }
-
     public static UsuarioDadosComplementarRequest requestDadosComplementares() {
         return new UsuarioDadosComplementarRequest(
                 CIDADE, ESTADO, PAIS);
     }
 
-    public static String requestDadosComplementaresEmString() {
-        return """
-                {
-                    "cidade":"%s",
-                    "estado":"%s",
-                    "pais":"%s"
-                }
-                """.formatted(CIDADE, ESTADO, PAIS);
-    }
-
     public static User userEntity(UsuarioProfile profile) {
         String senhaHash = BCrypt.hashpw(SENHA, BCrypt.gensalt());
-        boolean senhaTrocada = false;
-        if (profile.equals(UsuarioProfile.LEITOR)) {
-            senhaTrocada = true;
-        }
+        boolean senhaTrocada = profile.equals(UsuarioProfile.LEITOR);
 
-        return new User(2L, EMAIL, senhaHash, senhaTrocada, profile, null);
+        return user()
+                .id(2L)
+                .user(EMAIL)
+                .senha(senhaHash)
+                .senhaTrocada(senhaTrocada)
+                .profile(profile)
+                .build();
     }
 
     public static Usuario entidadePrincipal(User user) {
-        Usuario usuario = new Usuario();
-        usuario.setId(ID);
-        usuario.setNome(NOME);
-        usuario.setEmail(EMAIL);
-        usuario.setCpf(CPF);
-        usuario.setDataDeNascimento(DATA_DE_NASCIMENTO);
-        usuario.setAceitarTermos(CHECK_TERMO);
-        usuario.setUser(user);
-        user.setUsuario(usuario);
-        return usuario;
+        return usuario()
+                .id(ID)
+                .nome(NOME)
+                .email(EMAIL)
+                .cpf(CPF)
+                .dataDeNascimento(DATA_DE_NASCIMENTO)
+                .aceitarTermos(CHECK_TERMO)
+                .user(user)
+                .build();
     }
 
     public static Usuario entidadeCompleta() {
@@ -99,53 +73,30 @@ public class UserFixture {
 
     public static Usuario entidadeCompleta(User user) {
         Usuario usuario = entidadePrincipal(user);
-        usuario.setCidade(CIDADE);
-        usuario.setEstado(ESTADO);
-        usuario.setPais(PAIS);
-        usuario.setFoto(FOTO);
-        return usuario;
+        return usuario
+                .withCidade(CIDADE)
+                .withEstado(ESTADO)
+                .withPais(PAIS)
+                .withFoto(FOTO);
     }
 
     public static UsuarioResponseDto response(Usuario user) {
         return new UsuarioResponseDto(
-                user.getId(), user.getNome(), user.getEmail(), user.getCpf(),
-                user.getUser().getProfile(), user.getDataDeNascimento(), user.getAceitarTermos(),
-                user.getCidade(), user.getEstado(), user.getPais(), "/usuarios/foto");
-    }
-
-    public static Usuario atualizar(Usuario usuario, UsuarioAtualizadoAdministradorRequest atualizacoes) {
-        usuario.setDataDeNascimento(atualizacoes.dataDeNascimento() != null ? atualizacoes.dataDeNascimento()
-                : usuario.getDataDeNascimento());
-        usuario.setCidade(atualizacoes != null ? atualizacoes.cidade() : usuario.getCidade());
-        usuario.setEstado(atualizacoes.estado() != null ? atualizacoes.estado() : usuario.getEstado());
-        usuario.setPais(atualizacoes.pais() != null ? atualizacoes.pais() : usuario.getPais());
-        return usuario;
-    }
-
-    public static Usuario atualizar(Usuario usuario, UsuarioAtualizadoLeitorRequest atualizacoes) {
-        usuario.setNome(atualizacoes.nome() != null ? atualizacoes.nome() : usuario.getNome());
-        usuario.setEmail(atualizacoes.email() != null ? atualizacoes.email() : usuario.getEmail());
-        usuario.setDataDeNascimento(atualizacoes.dataDeNascimento() != null ? atualizacoes.dataDeNascimento()
-                : usuario.getDataDeNascimento());
-        usuario.setCidade(atualizacoes.cidade() != null ? atualizacoes.cidade() : usuario.getCidade());
-        usuario.setEstado(atualizacoes.estado() != null ? atualizacoes.estado() : usuario.getEstado());
-        usuario.setPais(atualizacoes.pais() != null ? atualizacoes.pais() : usuario.getPais());
-        return usuario;
+                user.id(), user.nome(), user.email(), user.cpf(),
+                user.user() != null ? user.user().profile() : null, user.dataDeNascimento(), user.aceitarTermos(),
+                user.cidade(), user.estado(), user.pais(), "/usuarios/foto");
     }
 
     private static byte[] carregarImagem() {
         try (InputStream is = UserFixture.class
                 .getClassLoader()
                 .getResourceAsStream("usuario.jpg")) {
-
             if (is == null) {
-                throw new RuntimeException("Arquivo usuario.jpg não encontrado");
+                return new byte[0];
             }
-
             return is.readAllBytes();
-
         } catch (IOException e) {
-            throw new RuntimeException("Erro ao carregar imagem", e);
+            return new byte[0];
         }
     }
 }

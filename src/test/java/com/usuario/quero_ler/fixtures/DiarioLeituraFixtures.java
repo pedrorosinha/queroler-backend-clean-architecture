@@ -1,17 +1,16 @@
 package com.usuario.quero_ler.fixtures;
 
+import static com.usuario.quero_ler.fixtures.EntityBuilders.*;
+
 import java.util.List;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-import com.usuario.quero_ler.dtos.leitura.AcompanhamentoLeituraResponseDto;
-import com.usuario.quero_ler.dtos.leitura.DiarioDeLeituraRequestDto;
-import com.usuario.quero_ler.models.DiarioDeLeitura;
-import com.usuario.quero_ler.models.Livro;
-import com.usuario.quero_ler.models.Usuario;
-import com.usuario.quero_ler.models.Leitura;
-import com.usuario.quero_ler.dtos.leitura.DiarioDeLeituraResponseDto;
-import com.usuario.quero_ler.dtos.livro.LivroResumoResponseDto;
+import com.usuario.quero_ler.infrastructure.dto.leitura.AcompanhamentoLeituraResponseDto;
+import com.usuario.quero_ler.infrastructure.dto.leitura.DiarioDeLeituraRequestDto;
+import com.usuario.quero_ler.infrastructure.dto.leitura.DiarioDeLeituraResponseDto;
+import com.usuario.quero_ler.infrastructure.dto.livro.LivroResumoResponseDto;
+import com.usuario.quero_ler.core.entities.DiarioDeLeitura;
 
 public final class DiarioLeituraFixtures {
 
@@ -27,46 +26,36 @@ public final class DiarioLeituraFixtures {
                 4.0,
                 "Titulo",
                 "resenha",
-								true);
+                true);
     }
 
-    public static DiarioDeLeitura novoDiarioDeLeituraEntity(Long diarioId, Long usuarioId, Long livroId) {
-        Livro livro = new Livro();
-        livro.setId(livroId);
-
-        Usuario usuario = new Usuario();
-        usuario.setId(usuarioId);
-
-        Leitura leitura = new Leitura();
-        leitura.setLivro(livro);
-        leitura.setUsuario(usuario);
-
-        DiarioDeLeitura diario = new DiarioDeLeitura();
-        diario.setId(diarioId);
-        diario.setLeitura(leitura);
-        diario.setInicioDaLeitura(LocalDateTime.now().minusDays(1));
-        diario.setTerminoDaLeitura(LocalDateTime.now());
-        diario.setPaginasLidas(10);
-        diario.setNota(4.0);
-        diario.setTituloDaResenha("Titulo");
-        diario.setResenha("resenha");
-        return diario;
+    public static DiarioDeLeitura diarioDeLeitura() {
+        return EntityBuilders.diarioDeLeitura()
+                .id(1L)
+                .inicioDaLeitura(LocalDateTime.now().minusDays(1))
+                .terminoDaLeitura(LocalDateTime.now())
+                .paginasLidas(10)
+                .nota(4.0)
+                .tituloDaResenha("Titulo")
+                .resenha("resenha")
+                .spoiler(true)
+                .build();
     }
 
-		public static DiarioDeLeituraResponseDto diarioDeLeituraResponse(){
-			LivroResumoResponseDto livroResumo = new LivroResumoResponseDto(1L, "titulo", 10);
-		  List<AcompanhamentoLeituraResponseDto> acompanhamentoLeitura = new ArrayList<>();
+    public static DiarioDeLeituraResponseDto diarioDeLeituraResponse(){
+        LivroResumoResponseDto livroResumo = new LivroResumoResponseDto(1L, "titulo", 10);
+        List<AcompanhamentoLeituraResponseDto> acompanhamentoLeitura = new ArrayList<>();
 
-			return new DiarioDeLeituraResponseDto(
-					2L,
-					livroResumo,
-          LocalDateTime.now().minusDays(1),
-          LocalDateTime.now(),
-					acompanhamentoLeitura,
-					0.0,
-					"Titulo",
-					"resenha",
-					true
-					);
-		}
+        return new DiarioDeLeituraResponseDto(
+                2L,
+                livroResumo,
+                LocalDateTime.now().minusDays(1),
+                LocalDateTime.now(),
+                acompanhamentoLeitura,
+                0.0,
+                "Titulo",
+                "resenha",
+                true
+        );
+    }
 }
