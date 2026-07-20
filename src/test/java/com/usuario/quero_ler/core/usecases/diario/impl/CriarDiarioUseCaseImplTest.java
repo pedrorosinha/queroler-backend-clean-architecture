@@ -2,7 +2,6 @@ package com.usuario.quero_ler.core.usecases.diario.impl;
 
 import com.usuario.quero_ler.core.entities.DiarioDeLeitura;
 import com.usuario.quero_ler.core.entities.Leitura;
-import com.usuario.quero_ler.core.entities.Usuario;
 import com.usuario.quero_ler.core.enums.LeituraStatus;
 import com.usuario.quero_ler.core.exceptions.DiarioJaExisteException;
 import com.usuario.quero_ler.core.exceptions.DadosDiarioInvalidoException;

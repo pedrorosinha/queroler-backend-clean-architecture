@@ -7,9 +7,6 @@ public enum LeituraStatus {
     LIVROS_ABANDONADOS("livros abandonados"),
     RELENDO("relendo");
 
-    private final String status;
-
     LeituraStatus(String tipo) {
-        this.status = tipo;
     }
 }

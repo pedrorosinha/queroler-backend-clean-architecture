@@ -4,7 +4,6 @@ import com.usuario.quero_ler.core.usecases.notificacao.ListarNotificacoesPorUsua
 import com.usuario.quero_ler.core.usecases.notificacao.MarcarNotificacoesComoLidasUseCase;
 import com.usuario.quero_ler.core.utils.Pagination;
 import com.usuario.quero_ler.infrastructure.bean.UsuarioAtualHelper;
-import com.usuario.quero_ler.infrastructure.dto.notificacao.NotificacaoResponseDto;
 import com.usuario.quero_ler.infrastructure.mapper.NotificacaoMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;

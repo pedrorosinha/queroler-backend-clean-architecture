@@ -1,7 +1,5 @@
 package com.usuario.quero_ler.fixtures;
 
-import static com.usuario.quero_ler.fixtures.EntityBuilders.*;
-
 import com.usuario.quero_ler.infrastructure.dto.meta.MetaRequestDto;
 import com.usuario.quero_ler.core.entities.MetaLeitura;
 

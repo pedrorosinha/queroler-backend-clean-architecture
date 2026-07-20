@@ -1,6 +1,6 @@
 package com.usuario.quero_ler.infrastructure.exceptions;
 
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import tools.jackson.databind.exc.InvalidFormatException;
 import com.usuario.quero_ler.core.exceptions.*;
 
 import jakarta.validation.ConstraintViolationException;
@@ -197,7 +197,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<Object> handleMaxUploadSizeExceeded(MaxUploadSizeExceededException ex) {
-        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body("Arquivo excede o tamanho máximo permitido. Tamanho máximo: " + tamanhoMaximo);
+        return ResponseEntity.status(HttpStatus.CONTENT_TOO_LARGE).body("Arquivo excede o tamanho máximo permitido. Tamanho máximo: " + tamanhoMaximo);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -250,7 +250,7 @@ public class GlobalExceptionHandler {
         }
         if (ex.getTargetType().equals(java.time.LocalDate.class) ||
                 ex.getTargetType().equals(java.time.LocalDateTime.class)) {
-            String campo = ex.getPath().isEmpty() ? "data" : ex.getPath().get(0).getFieldName();
+            String campo = ex.getPath().isEmpty() ? "data" : ex.getPath().get(0).getPropertyName();
             String mensagem = String.format("O campo '%s' está com um formato de data inválido. Use o padrão DD/MM/YYYY.", campo);
             return ResponseEntity.badRequest().body(mensagem);
         }

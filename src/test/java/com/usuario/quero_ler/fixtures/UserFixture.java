@@ -6,7 +6,7 @@ import com.usuario.quero_ler.infrastructure.dto.usuario.*;
 import com.usuario.quero_ler.core.enums.UsuarioProfile;
 import com.usuario.quero_ler.core.entities.User;
 import com.usuario.quero_ler.core.entities.Usuario;
-import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,7 +42,7 @@ public class UserFixture {
     }
 
     public static User userEntity(UsuarioProfile profile) {
-        String senhaHash = BCrypt.hashpw(SENHA, BCrypt.gensalt());
+        String senhaHash = new BCryptPasswordEncoder().encode(SENHA);
         boolean senhaTrocada = profile.equals(UsuarioProfile.LEITOR);
 
         return user()

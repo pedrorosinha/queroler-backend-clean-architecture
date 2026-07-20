@@ -1,8 +1,6 @@
 package com.usuario.quero_ler.infrastructure.presentation;
 
-import com.usuario.quero_ler.core.entities.Autor;
 import com.usuario.quero_ler.core.entities.Livro;
-import com.usuario.quero_ler.core.enums.LeituraStatus;
 import com.usuario.quero_ler.core.enums.LivroIdioma;
 import com.usuario.quero_ler.fixtures.LivroFixture;
 import static com.usuario.quero_ler.fixtures.EntityBuilders.*;
@@ -10,22 +8,20 @@ import com.usuario.quero_ler.core.usecases.livro.*;
 import com.usuario.quero_ler.core.usecases.acompanhamento.ListarAcompanhamentoPorLivroUseCase;
 import com.usuario.quero_ler.core.utils.PaginatedResult;
 import com.usuario.quero_ler.core.utils.Pagination;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.usuario.quero_ler.infrastructure.mapper.LivroMapper;
 import com.usuario.quero_ler.infrastructure.bean.UsuarioAtualHelper;
 import com.usuario.quero_ler.infrastructure.security.SecurityFilter;
-import com.usuario.quero_ler.core.entities.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.List;
 import java.util.Set;

@@ -1,6 +1,6 @@
 package com.usuario.quero_ler.infrastructure.presentation;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.usuario.quero_ler.core.entities.Autor;
 import com.usuario.quero_ler.core.entities.Livro;
 import com.usuario.quero_ler.core.usecases.livro.*;
@@ -11,9 +11,7 @@ import com.usuario.quero_ler.infrastructure.bean.UsuarioAtualHelper;
 import com.usuario.quero_ler.infrastructure.dto.livro.LivroRequest;
 import com.usuario.quero_ler.infrastructure.dto.livro.LivroResponse;
 import com.usuario.quero_ler.infrastructure.dto.leitura.AcompanhamentoResponseDto;
-import com.usuario.quero_ler.infrastructure.mapper.LivroMapper;
 import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Valid;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -44,7 +42,6 @@ public class LivroController {
     private final ListarLivrosPopularesUseCase listarLivrosPopularesUseCase;
     private final ListarLivrosDetalhadosUseCase listarLivrosDetalhadosUseCase;
     private final ListarAcompanhamentoPorLivroUseCase listarAcompanhamentoPorLivroUseCase;
-    private final LivroMapper livroMapper;
     private final UsuarioAtualHelper usuarioAtual;
     private final ObjectMapper objectMapper;
     private final Validator validator;

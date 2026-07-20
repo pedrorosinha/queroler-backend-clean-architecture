@@ -1,11 +1,9 @@
 package com.usuario.quero_ler.core.entities;
 
-import com.usuario.quero_ler.core.enums.LivroIdioma;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 

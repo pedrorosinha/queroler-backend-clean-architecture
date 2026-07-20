@@ -43,7 +43,7 @@ class CriarMetaUseCaseImplTest {
         when(metaLeituraGateway.existsByUsuarioAndAno(any(), eq(LocalDate.now().getYear()))).thenReturn(false);
         when(metaLeituraGateway.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        MetaLeitura resultado = useCase.execute(meta, usuarioPadrao());
+        useCase.execute(meta, usuarioPadrao());
 
         verify(metaLeituraGateway).save(metaCaptor.capture());
         assertEquals(20, metaCaptor.getValue().metaLivrosAno());

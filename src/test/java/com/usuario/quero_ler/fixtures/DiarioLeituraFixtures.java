@@ -1,7 +1,5 @@
 package com.usuario.quero_ler.fixtures;
 
-import static com.usuario.quero_ler.fixtures.EntityBuilders.*;
-
 import java.util.List;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

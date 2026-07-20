@@ -4,7 +4,6 @@ import com.usuario.quero_ler.core.entities.User;
 import com.usuario.quero_ler.core.enums.UsuarioProfile;
 import com.usuario.quero_ler.core.exceptions.SenhaInvalidaException;
 import com.usuario.quero_ler.core.gateway.UserGateway;
-import com.usuario.quero_ler.core.utils.PasswordHasher;
 import com.usuario.quero_ler.infrastructure.security.BCryptPasswordHasher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -40,7 +39,7 @@ class CriarUserUseCaseImplTest {
     void criarLeitor() {
         when(userGateway.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        User resultado = useCase.execute("test@email.com", "Senha@123", UsuarioProfile.LEITOR);
+        useCase.execute("test@email.com", "Senha@123", UsuarioProfile.LEITOR);
 
         verify(userGateway).save(userCaptor.capture());
         User salvo = userCaptor.getValue();
@@ -56,7 +55,7 @@ class CriarUserUseCaseImplTest {
     void criarAdmin() {
         when(userGateway.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        User resultado = useCase.execute("admin@email.com", "Senha@123", UsuarioProfile.ADMINISTRADOR);
+        useCase.execute("admin@email.com", "Senha@123", UsuarioProfile.ADMINISTRADOR);
 
         verify(userGateway).save(userCaptor.capture());
         assertFalse(userCaptor.getValue().senhaTrocada());

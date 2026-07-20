@@ -10,10 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class UsuarioMapper {
 
-    private final EntityMapper entityMapper;
-
     UsuarioMapper(@Lazy EntityMapper entityMapper) {
-        this.entityMapper = entityMapper;
     }
 
     public Usuario toDomain(UsuarioRequestDto dto) {

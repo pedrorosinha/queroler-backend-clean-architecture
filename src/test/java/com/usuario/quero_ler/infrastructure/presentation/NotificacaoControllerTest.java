@@ -1,6 +1,5 @@
 package com.usuario.quero_ler.infrastructure.presentation;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.usuario.quero_ler.core.entities.UsuarioNotificacao;
 import com.usuario.quero_ler.core.entities.Notificacao;
 import com.usuario.quero_ler.core.usecases.notificacao.ListarNotificacoesPorUsuarioUseCase;
@@ -16,13 +15,12 @@ import static com.usuario.quero_ler.fixtures.EntityBuilders.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.Mockito.verify;
@@ -51,9 +49,6 @@ class NotificacaoControllerTest {
 
     @MockitoBean
     private SecurityFilter securityFilter;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Test
     @DisplayName("Deve retornar notificações não lidas do usuário")

@@ -1,6 +1,5 @@
 package com.usuario.quero_ler.core.entities;
 
-import com.usuario.quero_ler.core.enums.LeituraStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

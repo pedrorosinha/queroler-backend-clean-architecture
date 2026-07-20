@@ -43,7 +43,7 @@ public class UsuarioController {
     private final ExcluirPerfilUseCase excluirPerfilUseCase;
     private final ListarAcompanhamentoPorUsuarioUseCase listarAcompanhamentoPorUsuarioUseCase;
     private final UsuarioMapper usuarioMapper;
-    private final com.fasterxml.jackson.databind.ObjectMapper objectMapper;
+    private final tools.jackson.databind.ObjectMapper objectMapper;
     private final Validator validator;
     private final UsuarioAtualHelper usuarioAtual;
 

@@ -6,9 +6,6 @@ public enum TiposDeBusca {
     EDITORA("Editora"),
     ISBN("Isbn");
 
-    private String tipo;
-
     TiposDeBusca(String tipo) {
-        this.tipo = tipo;
     }
 }

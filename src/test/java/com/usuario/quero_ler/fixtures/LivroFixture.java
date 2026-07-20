@@ -28,8 +28,8 @@ public class LivroFixture {
     private static final byte[] CAPADOLIVRO = carregarImagem();
     private static final LocalDateTime DATA_DE_CADASTRO = LocalDateTime.now();
 
-    public static BuscaDeLivrosRequest buscaDeLivrosRequest(TiposDeBusca tiposDeBusca){
-        return switch (tiposDeBusca){
+    public static BuscaDeLivrosRequest buscaDeLivrosRequest(TiposDeBusca tiposDeBusca) {
+        return switch (tiposDeBusca) {
             case ISBN -> new BuscaDeLivrosRequest(TiposDeBusca.ISBN, ISBN);
             case EDITORA -> new BuscaDeLivrosRequest(TiposDeBusca.EDITORA, EDITORA);
             case TITULO -> new BuscaDeLivrosRequest(TiposDeBusca.TITULO, TITULO);
@@ -37,14 +37,13 @@ public class LivroFixture {
         };
     }
 
-    public static LivroRequest request(){
+    public static LivroRequest request() {
         return new LivroRequest(
                 TITULO, ISBN, EDITORA, ANODEPUBLICACAO, NUMERODEPAGINAS, IDIOMA, SINOPSE,
-                List.of(AutorFixture.request())
-        );
+                List.of(AutorFixture.request()));
     }
 
-    public static Livro entity(){
+    public static Livro entity() {
         List<Autor> autores = new ArrayList<>();
         autores.add(AutorFixture.entity());
         return livro()
@@ -54,34 +53,42 @@ public class LivroFixture {
                 .dataDeCadastro(LocalDateTime.now()).build();
     }
 
-    public static LivroResponse response(){
+    public static Livro entityComCapa() {
+        List<Autor> autores = new ArrayList<>();
+        autores.add(AutorFixture.entity());
+        return livro()
+                .id(ID).titulo(TITULO).isbn(ISBN).editora(EDITORA)
+                .anoDePublicacao(ANODEPUBLICACAO).numeroDePaginas(NUMERODEPAGINAS)
+                .idioma(IDIOMA).sinopse(SINOPSE).capaDoLivro(CAPADOLIVRO).autores(autores)
+                .dataDeCadastro(LocalDateTime.now()).build();
+    }
+
+    public static LivroResponse response() {
         return new LivroResponse(
                 ID, TITULO, ISBN, EDITORA, ANODEPUBLICACAO, NUMERODEPAGINAS, IDIOMA, SINOPSE,
-                "/livros/"+ ID + "/capa", DATA_DE_CADASTRO, List.of(AutorFixture.response())
-        );
+                "/livros/" + ID + "/capa", DATA_DE_CADASTRO, List.of(AutorFixture.response()));
     }
 
-    public static LivroCardResponse responseCard(){
+    public static LivroCardResponse responseCard() {
         return new LivroCardResponse(
-                "/livros/"+ ID + "/capa", TITULO, EDITORA, ANODEPUBLICACAO, NUMERODEPAGINAS,
-                DATA_DE_CADASTRO, List.of(AutorFixture.response())
-        );
+                "/livros/" + ID + "/capa", TITULO, EDITORA, ANODEPUBLICACAO, NUMERODEPAGINAS,
+                DATA_DE_CADASTRO, List.of(AutorFixture.response()));
     }
 
-    public static LivroTelaLeituraResponse responseTelaDeLeitura(LeituraStatus status){
-        return new LivroTelaLeituraResponse(TITULO, status, "/livros/"+ ID + "/capa", DATA_DE_CADASTRO);
+    public static LivroTelaLeituraResponse responseTelaDeLeitura(LeituraStatus status) {
+        return new LivroTelaLeituraResponse(TITULO, status, "/livros/" + ID + "/capa", DATA_DE_CADASTRO);
     }
 
-    public static LivroDetalhadoResponse responseDetalhado(LeituraStatus status){
+    public static LivroDetalhadoResponse responseDetalhado(LeituraStatus status) {
         return new LivroDetalhadoResponse(
-                "/livros/"+ ID + "/capa", TITULO, EDITORA, ANODEPUBLICACAO, NUMERODEPAGINAS,
-                IDIOMA.name(), ISBN, SINOPSE, DATA_DE_CADASTRO, List.of(AutorFixture.response())
-        );
+                "/livros/" + ID + "/capa", TITULO, EDITORA, ANODEPUBLICACAO, NUMERODEPAGINAS,
+                IDIOMA.name(), ISBN, SINOPSE, DATA_DE_CADASTRO, List.of(AutorFixture.response()));
     }
 
     private static byte[] carregarImagem() {
         try (InputStream is = LivroFixture.class.getClassLoader().getResourceAsStream("capa.jpg")) {
-            if (is == null) return new byte[0];
+            if (is == null)
+                return new byte[0];
             return is.readAllBytes();
         } catch (IOException e) {
             return new byte[0];

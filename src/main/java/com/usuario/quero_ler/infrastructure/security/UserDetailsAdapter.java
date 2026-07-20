@@ -1,7 +1,6 @@
 package com.usuario.quero_ler.infrastructure.security;
 
 import com.usuario.quero_ler.core.entities.User;
-import com.usuario.quero_ler.core.enums.UsuarioProfile;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

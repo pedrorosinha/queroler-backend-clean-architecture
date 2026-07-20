@@ -9,7 +9,6 @@ import com.usuario.quero_ler.infrastructure.persistence.UsuarioNotificacaoReposi
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
