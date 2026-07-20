@@ -6,13 +6,60 @@ A **API Quero Ler** é uma plataforma inspirada na rede social Skoob, desenvolvi
 
 ## 🛠️ Tecnologias e Ferramentas
 
-*   **Linguagem:** Java 21
-*   **Framework:** Spring Boot 3.x
-*   **Banco de Dados:** PostgreSQL (Produção/Dev), H2 (Testes)
-*   **Migrações:** Flyway
-*   **Segurança:** Spring Security + JWT (Cookie HttpOnly)
-*   **Documentação:** Swagger (OpenAPI 3)
-*   **Containers:** Docker
+* **Linguagem:** Java 21
+* **Framework:** Spring Boot 4.0.7
+* **Banco de Dados:** PostgreSQL (Produção/Dev), H2 (Testes)
+* **Migrações:** Flyway
+* **Segurança:** Spring Security + JWT (Cookie HttpOnly)
+* **Serialização:** Jackson 3.x (tools.jackson)
+* **Documentação:** Swagger (OpenAPI 3)
+* **Containers:** Docker
+
+---
+
+## 🏗️ Arquitetura
+
+O projeto segue os princípios de **Clean Architecture**, separando o código em camadas com responsabilidades bem definidas e dependências que apontam de fora para dentro.
+
+### Estrutura de Pacotes
+
+```
+src/main/java/com/usuario/quero_ler/
+├── core/                                     # Camada de domínio (sem dependência de frameworks)
+│   ├── entities/                             # Entidades de domínio (records imutáveis)
+│   ├── enums/                                # Enumerações de domínio
+│   ├── exceptions/                           # Exceções de domínio
+│   ├── gateway/                              # Interfaces dos gateways (ports)
+│   ├── usecases/                             # Interfaces e implementações dos casos de uso
+│   └── utils/                                # Utilitários puros (Cpf, Email, Senhas, Paginação)
+└── infrastructure/                           # Camada de infraestrutura (frameworks e detalhes)
+    ├── bean/                                 # Configurações e helpers Spring
+    ├── dto/                                  # DTOs de request/response
+    ├── exceptions/                           # Tratamento global de exceções
+    ├── gateway/                              # Implementações dos gateways (JPA)
+    ├── mapper/                               # Mappers entre entidades JPA e domínio
+    ├── persistence/                          # Entidades JPA, repositórios, specifications
+    ├── presentation/                         # Controllers REST
+    └── security/                             # JWT, SecurityConfig, filtros
+```
+
+### Regra de Dependências
+
+* **`core/`** não possui nenhuma importação de frameworks (Spring, JPA, Lombok, etc.)
+* **`infrastructure/`** implementa as interfaces definidas em `core/gateway/`
+* **`core/usecases/`** depende apenas das interfaces `core/gateway/` (nunca de implementações)
+* **Entidades de domínio** são records imutáveis com métodos `withXxx()` para atualização
+* **DTOs** vivem em `infrastructure/dto/` e nunca são expostas na camada de domínio
+
+### Fluxo de uma Requisição
+
+```
+Controller (infrastructure/presentation/)
+  → Use Case (core/usecases/)
+    → Gateway Interface (core/gateway/)
+      → Gateway Implementation (infrastructure/gateway/)
+        → JPA Repository (infrastructure/persistence/)
+```
 
 ---
 
@@ -21,12 +68,14 @@ A **API Quero Ler** é uma plataforma inspirada na rede social Skoob, desenvolvi
 O projeto utiliza **Spring Security** com uma estratégia **Stateless** via tokens JWT. Um diferencial desta implementação é o uso de **Cookies HttpOnly**, o que aumenta a segurança contra ataques XSS ao impedir que o JavaScript do front-end acesse o token diretamente.
 
 ### Modelo de Dados de Usuário
+
 A estrutura de segurança é dividida em duas entidades para separação de responsabilidades:
 
-1.  **`User`**: Entidade de infraestrutura que implementa `UserDetails`. Gerencia credenciais e perfis de acesso (`ROLE_USER`, `ROLE_ADMIN`).
-2.  **`Usuario`**: Entidade de domínio que armazena informações cadastrais, perfil social e relacionamentos (livros e notificações).
+1. **`User`**: Entidade de infraestrutura que implementa `UserDetails`. Gerencia credenciais e perfis de acesso (`ROLE_USER`, `ROLE_ADMIN`).
+2. **`Usuario`**: Entidade de domínio que armazena informações cadastrais, perfil social e relacionamentos (livros e notificações).
 
 ### Configuração de Segurança (SecurityConfig)
+
 A gerência e o ciclo de vida do token de autenticação estão concentrados no backend, removendo a responsabilidade do front-end de armazenar ou validar o token manualmente.
 
 ---
@@ -37,8 +86,8 @@ O sistema de notificações segue uma arquitetura de **broadcast** com controle 
 
 ### Modelo de Dados
 
-- **`Notificacao`**: Representa a notificação em si (mensagem e data de criação). Uma única notificação pode ser enviada para todos os usuários.
-- **`UsuarioNotificacao`**: Entidade associativa que vincula uma notificação a um usuário específico, controlando se foi **visualizada** ou não.
+* **`Notificacao`**: Representa a notificação em si (mensagem e data de criação). Uma única notificação pode ser enviada para todos os usuários.
+* **`UsuarioNotificacao`**: Entidade associativa que vincula uma notificação a um usuário específico, controlando se foi **visualizada** ou não.
 
 ### Endpoints
 
@@ -49,47 +98,55 @@ O sistema de notificações segue uma arquitetura de **broadcast** com controle 
 
 ### Comportamento
 
-- **Limpeza automática**: Notificações com mais de 30 dias são excluídas automaticamente a cada consulta ou atualização.
-- **Flag de leitura**: O campo `visualizada` no response do GET permite que o front-end diferencie notificações lidas das não lidas.
-- **Ordenação**: As notificações são retornadas da mais recente para a mais antiga.
-- **Criação**: Quando um documento é atualizado pelo administrador, uma notificação é criada e enviada para todos os usuários cadastrados.
+* **Limpeza automática**: Notificações com mais de 30 dias são excluídas automaticamente a cada consulta ou atualização.
+* **Flag de leitura**: O campo `visualizada` no response do GET permite que o front-end diferencie notificações lidas das não lidas.
+* **Ordenação**: As notificações são retornadas da mais recente para a mais antiga.
+* **Criação**: Quando um documento é atualizado pelo administrador, uma notificação é criada e enviada para todos os usuários cadastrados.
 
 ---
 
 ### Pré-requisitos
-*   Docker e Docker Compose
-*   Java 21 e Maven (ou Maven Wrapper `./mvnw`)
+
+* Docker e Docker Compose
+* Java 21 e Maven (ou Maven Wrapper `./mvnw`)
 
 ### Passo a Passo
 
-#### Utilizando docker compose 
+#### Utilizando docker compose
 
-* ** Antes de subir a aplicação local, é necessário adicionar as variaveis de ambiente no projeto (arquivo .env na raiz do projeto)**
-- Exemplo de configuração (.env)
+* **Antes de subir a aplicação local, é necessário adicionar as variaveis de ambiente no projeto (arquivo .env na raiz do projeto)**
+
+* Exemplo de configuração (.env)
+
 ```bash
-POSTGRES_DB=db_quero_ler_v2
-SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/db_quero_ler_v2
+POSTGRES_DB=db_quero_ler_v2_clean_architecture
+SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/db_quero_ler_v2_clean_architecture
 SPRING_DATASOURCE_USERNAME=postgres
 SPRING_DATASOURCE_PASSWORD=postgres
 ```
 
 1. **Iniciar as instancia da aplicação, e, do banco de dados (docker-compose):"**
+
     ```bash
     docker compose up -d --build
     ```
+
 2. **Verificar se as instancia estão em execução:**
+
     ```bash
     docker ps 
     ```
-3. ** Deve retornar ao menos 2 instancias:**
+
+3. **Deve retornar ao menos 2 instancias:**
 
 |CONTAINER ID|IMAGE|COMMAND|CREATED|STATUS|PORTS|NAMES|
-|------------|--------------------|----------------------|---------------|-----------|-------------------------------------------|------------| 
+|------------|--------------------|----------------------|---------------|-----------|-------------------------------------------|------------|
 |90bb0deec9c9|queroler-backend-api|"sh -c 'java $JAVA_O…"|49 minutes ago|Up 5 seconds|0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp|api-queroler|
 |fe6a83a4f7fe|postgres:latest|"docker-entrypoint.s…"|49 minutes ago|Up 16 seconds (healthy)|0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp|postgres-queroler|
+
 ---
 
-### Rodar pela IDE/Terminal com instancia docker postgres para ambiente local.
+### Rodar pela IDE/Terminal com instancia docker postgres para ambiente local
 
 1. Suba a instancia docker do postgres via docker compose.
 
@@ -97,7 +154,7 @@ SPRING_DATASOURCE_PASSWORD=postgres
 docker compose up -d --build db
 ```
 
-2. Rodar o maven do spring-boot com o perfil local. Para quem utiliza ide como intelij, precisa especificar na configuração do runner para usar o profile de execução.
+1. Rodar o maven do spring-boot com o perfil local. Para quem utiliza ide como intelij, precisa especificar na configuração do runner para usar o profile de execução.
 
 ```bash
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=local
@@ -110,10 +167,25 @@ Para garantir a qualidade e integridade do código, execute a suíte de testes u
 ```bash
 ./mvnw clean test
 ```
+
+### Estrutura de Testes
+
+| Categoria              | Quantidade | Localização                         |
+|------------------------|------------|-------------------------------------|
+| Controller tests       | 8          | `infrastructure/presentation/`      |
+| Mapper tests           | 4          | `infrastructure/mapper/`            |
+| Entity tests           | 11         | `core/entities/`                    |
+| Use case tests         | 11         | `core/usecases/*/impl/`             |
+| Utils tests            | 4          | `core/utils/`                       |
+| Fixtures               | 8          | `fixtures/`                         |
+| **Total**              | **46**     |                                     |
+
 ## Api Railway
 
-- Fazendo requisições na api via curl.
+* Fazendo requisições na api via curl.
+
 1. Fazer login
+
 ```bash
   curl -i -X 'POST' \
   'https://queroler-backend-production.up.railway.app/logins' \
@@ -131,10 +203,11 @@ Como foi usado o commando grep do linux, esperamos receber como resposta a infor
 set-cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJxdWVyb19sZXIiLCJzdWIiOiJhZG1pbkBhZG1pbmlzdHJhdG9yLmNvbSIsInJvbGUiOiJMRUlUT1IiLCJleHAiOjE3NzUxMjQ1Njh9.wa5v3v_beTIBCWaGpBniF4Nc6hIWEWTgI2QM6_LP8E4; Path=/; Max-Age=7200; Expires=Thu, 02 Apr 2026 07:09:28 GMT; HttpOnly; SameSite=Strict
 ```
 
-2. Cadastrar livro
+1. Cadastrar livro
 
-Vamos popular a nossa requisição coms as informações dos dados no formulario, alem do arquivo que servira de imagem para capa do livro. O header **Authorization** deve ser informado com a chave jwt que recebemos no login. Dessa forma: `  --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJxdWVyb19sZXIiLCJzdWIiOiJhZG1pbkBhZG1pbmlzdHJhdG9yLmNvbSIsInJvbGUiOiJMRUlUT1IiLCJleHAiOjE3NzUxMjM1MzN9.936-ke4lRqzNhorABVboVl8PGcWLstVMghobi2UKyI8'`
+Vamos popular a nossa requisição coms as informações dos dados no formulario, alem do arquivo que servira de imagem para capa do livro. O header **Authorization** deve ser informado com a chave jwt que recebemos no login. Dessa forma: `--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJxdWVyb19sZXIiLCJzdWIiOiJhZG1pbkBhZG1pbmlzdHJhdG9yLmNvbSIsInJvbGUiOiJMRUlUT1IiLCJleHAiOjE3NzUxMjM1MzN9.936-ke4lRqzNhorABVboVl8PGcWLstVMghobi2UKyI8'`
 Ficamos com a seguinte request.
+
 ```bash
  curl -i --request POST \
   --url 'https://queroler-backend-production.up.railway.app/livros' \
@@ -157,6 +230,7 @@ Ficamos com a seguinte request.
 }' \
   --form 'imagem=@/home/renanalves/Imagens/imagem.png'
 ```
+
 Devemos receber um status 200 confirmando que nossa requisição foi processada com sucesso.
 
 ## 🤝Contribuir
@@ -171,11 +245,11 @@ Para este projeto vamos utilizar algumas convenções para commits e nomenclatur
 
 |tipo    |descrição|
 |--------|---------|
-|ci      | Criar/atualizar fluxos automatizados para integração continua| 
-|docs    | Mudanças na documentação| 
-|fix     | Correção de bugs e/ou problemas| 
-|feat    | Adiciona uma nova funcionalidade| 
-|refactor| Correção de código, sem adicionar nova funcionalidade ou resolver bug| 
+|ci      | Criar/atualizar fluxos automatizados para integração continua|
+|docs    | Mudanças na documentação|
+|fix     | Correção de bugs e/ou problemas|
+|feat    | Adiciona uma nova funcionalidade|
+|refactor| Correção de código, sem adicionar nova funcionalidade ou resolver bug|
 
 **Exemplo**: feat/cadastro-usuario
 
@@ -183,6 +257,4 @@ Também precisamos trabalhar com o commit semantico, para seguir um padrão mais
 
 * **tipo(escopo): mensagem curta**
 
-**Exemplo**: feat(infra): Adicionar o arquivo Dockerfile do applicação 
-
-
+**Exemplo**: feat(infra): Adicionar o arquivo Dockerfile do applicação
