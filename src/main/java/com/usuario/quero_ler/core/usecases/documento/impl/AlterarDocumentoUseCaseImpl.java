@@ -31,6 +31,9 @@ public class AlterarDocumentoUseCaseImpl implements AlterarDocumentoUseCase {
         if (documentoAtualizado.titulo() != null) {
             documento = documento.withTitulo(documentoAtualizado.titulo());
         }
+        if (documentoAtualizado.tipo() != null) {
+            documento = documento.withTipo(documentoAtualizado.tipo());
+        }
         if (documentoAtualizado.conteudo() != null) {
             documento = documento.withConteudo(documentoAtualizado.conteudo());
         }

@@ -1,6 +1,8 @@
 package com.usuario.quero_ler.infrastructure.gateway;
 
 import com.usuario.quero_ler.core.entities.Livro;
+import com.usuario.quero_ler.core.exceptions.CapaNaoCadastradaException;
+import com.usuario.quero_ler.core.exceptions.LivroNaoEncontradoException;
 import com.usuario.quero_ler.core.gateway.LivroGateway;
 import com.usuario.quero_ler.core.utils.PaginatedResult;
 import com.usuario.quero_ler.core.utils.Pagination;
@@ -10,6 +12,7 @@ import com.usuario.quero_ler.infrastructure.persistence.LivroRepository;
 import com.usuario.quero_ler.infrastructure.persistence.LivroSpecifications;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -56,7 +59,9 @@ public class LivroJpaGateway implements LivroGateway {
 
     @Override
     public PaginatedResult<Livro> listarPopulares(Pagination pagination) {
-        var pageable = PageRequest.of(pagination.page(), pagination.size());
+        var sort = Sort.by("quantidadeDeUso").descending()
+                .and(Sort.by("dataDeCadastro").descending());
+        var pageable = PageRequest.of(pagination.page(), pagination.size(), sort);
         var page = livroRepository.findAll(pageable).map(livroMapper::toDomain);
         return new PaginatedResult<>(page.getContent(), page.getTotalElements(), page.getTotalPages(), page.getNumber(), page.getSize());
     }
@@ -64,9 +69,9 @@ public class LivroJpaGateway implements LivroGateway {
     @Override
     public byte[] buscarCapa(Long livroId) {
         LivroEntity entity = livroRepository.findById(livroId)
-                .orElseThrow(() -> new com.usuario.quero_ler.core.exceptions.LivroNaoEncontradoException("Livro não encontrado"));
+                .orElseThrow(() -> new LivroNaoEncontradoException("Livro não encontrado"));
         if (entity.getCapaDoLivro() == null) {
-            throw new com.usuario.quero_ler.core.exceptions.CapaNaoCadastradaException("Capa não cadastrada");
+            throw new CapaNaoCadastradaException("Capa não cadastrada");
         }
         return entity.getCapaDoLivro();
     }

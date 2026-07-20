@@ -10,10 +10,13 @@ import com.usuario.quero_ler.core.utils.Pagination;
 import com.usuario.quero_ler.infrastructure.bean.UsuarioAtualHelper;
 import com.usuario.quero_ler.infrastructure.dto.livro.LivroRequest;
 import com.usuario.quero_ler.infrastructure.dto.livro.LivroResponse;
+import com.usuario.quero_ler.infrastructure.dto.livro.LivroCardResponse;
 import com.usuario.quero_ler.infrastructure.dto.leitura.AcompanhamentoResponseDto;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -90,10 +93,11 @@ public class LivroController {
     }
 
     @GetMapping("/populares")
-    public ResponseEntity<List<LivroResponse>> listarPopulares(Pageable pageable) {
+    public ResponseEntity<Page<LivroResponse>> listarPopulares(Pageable pageable) {
         Pagination pagination = new Pagination(pageable.getPageNumber(), pageable.getPageSize());
         var result = listarLivrosPopularesUseCase.execute(pagination);
-        return ResponseEntity.ok(result.content().stream().map(this::toResponse).toList());
+        var content = result.content().stream().map(this::toResponse).toList();
+        return ResponseEntity.ok(new PageImpl<>(content, pageable, result.totalElements()));
     }
 
     @GetMapping("/detalhados")
@@ -113,14 +117,15 @@ public class LivroController {
     }
 
     @GetMapping
-    public ResponseEntity<List<LivroResponse>> buscarLivros(
+    public ResponseEntity<Page<LivroCardResponse>> buscarLivros(
             @RequestParam(required = false) String titulo,
             @RequestParam(required = false) String editora,
             @RequestParam(required = false) String autor,
             Pageable pageable) {
         Pagination pagination = new Pagination(pageable.getPageNumber(), pageable.getPageSize());
         var result = buscarLivrosComFiltrosUseCase.execute(titulo, editora, autor, pagination);
-        return ResponseEntity.ok(result.content().stream().map(this::toResponse).toList());
+        var content = result.content().stream().map(this::toCardResponse).toList();
+        return ResponseEntity.ok(new PageImpl<>(content, pageable, result.totalElements()));
     }
 
     @GetMapping("/tela_de_leitura")
@@ -177,13 +182,34 @@ public class LivroController {
         );
     }
 
+    private LivroCardResponse toCardResponse(Livro livro) {
+        return new LivroCardResponse(
+                livro.id() != null ? "/livros/" + livro.id() + "/capa" : null,
+                livro.titulo(),
+                livro.editora(),
+                livro.anoDePublicacao(),
+                livro.numeroDePaginas(),
+                livro.dataDeCadastro(),
+                livro.autores() != null
+                        ? livro.autores().stream()
+                            .map(a -> new com.usuario.quero_ler.infrastructure.dto.autor.AutorResponse(a.id(), a.nome()))
+                            .toList()
+                        : List.of()
+        );
+    }
+
     private void validarImagem(MultipartFile arquivo) {
         if (arquivo.isEmpty()) {
             throw new LivroNaoEncontradoException("O arquivo não pode ser vazio.");
         }
         String contentType = arquivo.getContentType();
-        if (contentType == null || !contentType.startsWith("image/")) {
-            throw new LivroNaoEncontradoException("O arquivo deve ser uma imagem.");
+        List<String> tiposPermitidos = List.of(
+                "image/jpeg",
+                "image/jpg",
+                "image/png"
+        );
+        if (contentType == null || !tiposPermitidos.contains(contentType)) {
+            throw new LivroNaoEncontradoException("Formato inválido. Use JPG ou PNG");
         }
         try (ImageInputStream iis = ImageIO.createImageInputStream(arquivo.getInputStream())) {
             if (iis == null) {

@@ -4,8 +4,11 @@ import com.usuario.quero_ler.core.usecases.notificacao.ListarNotificacoesPorUsua
 import com.usuario.quero_ler.core.usecases.notificacao.MarcarNotificacoesComoLidasUseCase;
 import com.usuario.quero_ler.core.utils.Pagination;
 import com.usuario.quero_ler.infrastructure.bean.UsuarioAtualHelper;
+import com.usuario.quero_ler.infrastructure.dto.notificacao.NotificacaoResponseDto;
 import com.usuario.quero_ler.infrastructure.mapper.NotificacaoMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,11 +24,11 @@ public class NotificacaoController {
     private final UsuarioAtualHelper usuarioAtual;
 
     @GetMapping
-    public ResponseEntity<?> naoLidas(Pageable pageable) {
+    public ResponseEntity<Page<NotificacaoResponseDto>> naoLidas(Pageable pageable) {
         Pagination pagination = new Pagination(pageable.getPageNumber(), pageable.getPageSize());
         var notificacoes = listarNotificacoesPorUsuarioUseCase.execute(usuarioAtual.getUsuarioAtualId(), pagination);
         var response = notificacoes.content().stream().map(notificacaoMapper::toResponse).toList();
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new PageImpl<>(response, pageable, notificacoes.totalElements()));
     }
 
     @PutMapping

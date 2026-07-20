@@ -8,6 +8,7 @@ import com.usuario.quero_ler.infrastructure.dto.leitura.AcompanhamentoLeituraRes
 import com.usuario.quero_ler.infrastructure.dto.leitura.DiarioDeLeituraAtualizadoRequest;
 import com.usuario.quero_ler.infrastructure.dto.leitura.DiarioDeLeituraRequestDto;
 import com.usuario.quero_ler.infrastructure.dto.leitura.DiarioDeLeituraResponseDto;
+import com.usuario.quero_ler.infrastructure.dto.livro.LivroResumoResponseDto;
 import com.usuario.quero_ler.infrastructure.persistence.AcompanhamentoDeLeituraEntity;
 import com.usuario.quero_ler.infrastructure.persistence.DiarioDeLeituraEntity;
 import org.springframework.stereotype.Component;
@@ -55,9 +56,17 @@ public class DiarioLeituraMapper {
 
     public DiarioDeLeituraResponseDto toResponse(DiarioDeLeitura domain) {
         if (domain == null) return null;
+
+        LivroResumoResponseDto livroResumo = null;
+        if (domain.leitura() != null && domain.leitura().livro() != null) {
+            var livro = domain.leitura().livro();
+            livroResumo = new LivroResumoResponseDto(
+                    livro.id(), livro.titulo(), livro.numeroDePaginas());
+        }
+
         return new DiarioDeLeituraResponseDto(
                 domain.id(),
-                null,
+                livroResumo,
                 domain.inicioDaLeitura(),
                 domain.terminoDaLeitura(),
                 domain.comentarios() != null
