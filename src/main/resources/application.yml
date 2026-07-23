@@ -2,6 +2,9 @@ spring:
   application:
     name: QueroLerVersao02
   jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
     show-sql: true
     properties:
       hibernate:
@@ -12,7 +15,7 @@ spring:
       max-request-size: 10MB
 
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/db_quero_ler_v2}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/db_quero_ler_v2_clean_architecture}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
     password: ${SPRING_DATASOURCE_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
@@ -20,9 +23,9 @@ spring:
   flyway:
     enabled: true
     clean-disabled: false
-    baseline-on-migrate: false
-
-    locations: classpath:db/migration
+    baseline-on-migrate: true
+    locations:
+      - classpath:db/migration
 
 api:
   security:

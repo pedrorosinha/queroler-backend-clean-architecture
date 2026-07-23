@@ -1,6 +1,6 @@
 package com.usuario.quero_ler.fixtures;
 
-import com.usuario.quero_ler.dtos.login.LoginRequestDto;
+import com.usuario.quero_ler.infrastructure.dto.login.LoginRequestDto;
 
 public class LoginFixture {
     private static final String NOME = "admin";

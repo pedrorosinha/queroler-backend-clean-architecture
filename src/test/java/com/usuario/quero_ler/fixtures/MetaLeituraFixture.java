@@ -1,7 +1,7 @@
 package com.usuario.quero_ler.fixtures;
 
-import com.usuario.quero_ler.dtos.meta.MetaRequestDto;
-import com.usuario.quero_ler.models.MetaLeitura;
+import com.usuario.quero_ler.infrastructure.dto.meta.MetaRequestDto;
+import com.usuario.quero_ler.core.entities.MetaLeitura;
 
 import java.time.LocalDate;
 
@@ -22,7 +22,7 @@ public class MetaLeituraFixture {
 
     public static MetaLeitura metaLeitura(MetaRequestDto dto) {
         Integer anoCorrente = LocalDate.now().getYear();
-        return MetaLeitura.builder()
+        return EntityBuilders.metaLeitura()
                 .id(ID)
                 .ano(dto.ano() != null ? dto.ano() : anoCorrente)
                 .metaLivrosAno(dto.metaLivrosAno())
@@ -30,6 +30,5 @@ public class MetaLeituraFixture {
                 .metaPaginasDia(dto.metaPaginasDia())
                 .usuario(UserFixture.entidadeCompleta())
                 .build();
-
     }
 }

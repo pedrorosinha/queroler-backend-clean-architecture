@@ -1,0 +1,26 @@
+package com.usuario.quero_ler.infrastructure.persistence;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
+
+@Getter
+@Setter
+@Builder
+@Entity
+@Table(name = "tb_notificacao")
+@NoArgsConstructor
+@AllArgsConstructor
+public class NotificacaoEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "data_de_criacao", nullable = false)
+    private LocalDateTime dataDeCriacao;
+    @Column(name = "notificacao", nullable = false)
+    private String notificacao;
+    @Builder.Default
+    @Column(name = "lido", nullable = false)
+    private Boolean lido = false;
+}

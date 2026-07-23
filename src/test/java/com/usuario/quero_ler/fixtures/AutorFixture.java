@@ -1,8 +1,10 @@
 package com.usuario.quero_ler.fixtures;
 
-import com.usuario.quero_ler.dtos.autor.AutorRequest;
-import com.usuario.quero_ler.dtos.autor.AutorResponse;
-import com.usuario.quero_ler.models.Autor;
+import static com.usuario.quero_ler.fixtures.EntityBuilders.*;
+
+import com.usuario.quero_ler.infrastructure.dto.autor.AutorRequest;
+import com.usuario.quero_ler.infrastructure.dto.autor.AutorResponse;
+import com.usuario.quero_ler.core.entities.Autor;
 
 public class AutorFixture {
     private static final Long ID = 1L;
@@ -13,7 +15,10 @@ public class AutorFixture {
     }
 
     public static Autor entity() {
-        return new Autor(ID, NOME, null);
+        return autor()
+                .id(ID)
+                .nome(NOME)
+                .build();
     }
 
     public static AutorResponse response() {
